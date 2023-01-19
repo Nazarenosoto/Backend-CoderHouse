@@ -105,3 +105,4 @@ productManager.getProducts()
 productManager.getProductById(3)
 productManager.updateProduct(1, remplazo)
 productManager.deleteProduct(2)
+//Lo dejo sin el archivo JSON para que cuando lo ponga a correr vea como se crea
