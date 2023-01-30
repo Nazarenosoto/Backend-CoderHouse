@@ -17,13 +17,12 @@ app.get("/products", async (req, res)=>{
 })
 
 app.get("/products/:pId", async (req, res)=>{
-    const Pid = req.params.pId
-    try {
+    const pid = req.params.pid
+    if (!pid){
+        res.send({error:'id no encontrado'})
+    } else {
         const data = await productManager.getProducts()
-
-        Pid ? res.send(data.find(product => product.id == Pid)) : res.send(data)
-    } catch (error) {
-        console.log(error)
+        pid ? req.send(data.find(product => product.id == pid)) : req.send(data)
     }
 })
 

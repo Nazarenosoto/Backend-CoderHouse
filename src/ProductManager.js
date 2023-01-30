@@ -1,7 +1,7 @@
 import fs from 'fs'
 
 export class ProductManager {
-    #Products = './products.json'
+    #Products = '../products.json'
     constructor(){
         this.path = this.#Products
     }
