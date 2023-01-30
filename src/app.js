@@ -10,7 +10,7 @@ app.get("/products", async (req, res)=>{
     try {
         const data = await productManager.getProducts()
 
-        limit ? res.send(data.filter(product => product.id <= limit)) : res.send(data)
+        limit ? res.send(data.slice(0, limit)) : res.send(data)
     } catch (error) {
         console.log(error)
     }
