@@ -19,7 +19,7 @@ app.get("/products", async (req, res)=>{
 app.get("/products/:pId", async (req, res)=>{
     const pid = req.params.pId
     if (!pid){
-        console.error({error:'id no encontrado'})
+        console.log({error:'id no encontrado'})
     } else {
         const data = await productManager.getProducts()
         pid ? res.send(data.find(product => product.id == pid)) : res.send(data)
