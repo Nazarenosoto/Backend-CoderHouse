@@ -1,7 +1,7 @@
 import fs from 'fs'
 
 export class ProductManager {
-    #Products = '../products.json'
+    #Products = './products.json'
     constructor(){
         this.path = this.#Products
     }
@@ -18,7 +18,7 @@ export class ProductManager {
 
         try {
 
-            if(fs.existsSync(this.path)){     //si el archivo existe se pushea el producto
+            if(fs.existsSync(this.path)){     //se pushea el producto
                 console.log("existe el archivo");
                 let data = await fs.promises.readFile(this.path, 'utf-8') 
                 let dataJS = JSON.parse(data)                            

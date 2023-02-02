@@ -1,32 +1,18 @@
 import express from 'express'
-import { ProductManager } from './ProductManager.js'
 
-const productManager = new ProductManager
+import productsRouter from './routes/products.js'
+import cartsRouter from './routes/carts.js'
+
 const app = express()
 const PORT = 8080
 
-app.get("/products", async (req, res)=>{
-    const {limit} = req.query
-    try {
-        const data = await productManager.getProducts()
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
-        limit ? res.send(data.slice(0, limit)) : res.send(data)
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-app.get("/products/:pId", async (req, res)=>{
-    const pid = req.params.pId
-    if (!pid){
-        console.log({error:'id no encontrado'})
-    } else {
-        const data = await productManager.getProducts()
-        pid ? res.send(data.find(product => product.id == pid)) : res.send(data)
-    }
-})
+app.use('/api/products', productsRouter)
+app.use('/api/carts', cartsRouter)
 
 app.listen(PORT, (err)=>{
-    if(err) console.log(err)
-    console.log(`Escuchando puerto: ${PORT}`);
+    if (err) console.log(err)
+    console.log('Escuchando puerto: ', PORT);
 })
