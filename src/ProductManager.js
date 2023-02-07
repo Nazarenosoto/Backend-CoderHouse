@@ -1,68 +1,51 @@
 import fs from 'fs'
 
 export class ProductManager {
-    #Products = './products.json'
+    #Products = './src/products.json'
     constructor(){
         this.path = this.#Products
     }
 
-    async addProduct(title, description, price, thumbnail, code, stock){
-        const product = {
-            title,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock
-        }
-
+    //Agregar productos
+    addProduct = async (newItem) => {
+        let product = await this.getProducts()
         try {
-
-            if(fs.existsSync(this.path)){     //se pushea el producto
-                console.log("existe el archivo");
-                let data = await fs.promises.readFile(this.path, 'utf-8') 
-                let dataJS = JSON.parse(data)                            
-                //agrego id
-                product.id = dataJS[dataJS.length - 1].id + 1             
-                dataJS.push(product)
-                //escribe en el archivo los productos en un JSON
-                await fs.promises.writeFile(this.path, `${JSON.stringify(dataJS, null, 2)}`, 'utf-8')       
-            //si el archivo no existe se crea uno
-            }else{                           
-                product.id = 1
-                const arrProducts = [product]
-                
-                await fs.promises.writeFile(this.path, `${JSON.stringify(arrProducts, null, 2)}`, 'utf-8')  
-            }
+            if (product.length === 0) {
+            newItem.id = 1
+            product.push(newItem)
+        } else {
+            product = [ ...product, { ...newItem, id:product[product.length -1].id + 1}]
+        }
+            await fs.promises.writeFile(this.path, JSON.stringify(product, null,'\t'))
+            console.log('The product has been added to the database');
         } catch (error) {
-            console.log(error)
+            console.log(error);
+        }
+    }
+    getProducts = async () => {
+        try {
+            if (fs.existsSync(this.path)) {
+            const data = await fs.promises.readFile(this.path, 'utf-8')
+            const product = JSON.parse(data);
+            return product;
+        }
+        await fs.promises.writeFile(this.path, '[]', 'utf-8')
+        return []
+        } catch (error) {
+            console.log(error);
         }
     }
 
-    async getProducts(){
-        try {
-            let data = await fs.promises.readFile(this.path, 'utf-8')
-            let dataJS = JSON.parse(data)
-
-            return dataJS
-        } catch (error) {
-            console.log(error)
+        getProductById = async (id) => {
+        const data = await fs.promises.readFile(this.path, 'utf-8')
+        const product = JSON.parse(data).slice(id-1,id)
+        if (!product) {
+            return console.log(`No existe producto con el id: ${id}`)
         }
+        return console.log(productDb)
     }
 
-    async getProductById(id){
-        try {
-            let data = await fs.promises.readFile(this.path, 'utf-8')
-            let dataJS = JSON.parse(data)
-
-            const productById = dataJS.find(product => product.id == id)
-            
-            return productById
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
+    //Actualizar Producto
     async updateProduct(id, obj){
         try {
             let data = await fs.promises.readFile(this.path, 'utf-8')
@@ -82,6 +65,7 @@ export class ProductManager {
         }
     }
 
+    //Eliminar producto
     async deleteProduct(id){
         try {
             let data = await fs.promises.readFile(this.path, 'utf-8')

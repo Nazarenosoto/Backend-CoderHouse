@@ -40,11 +40,11 @@ router.post('/',async (req, res)=>{
 
     // se verifica que todos los datos sean validos
     if (title == undefined || description == undefined || code == undefined || price == undefined || status == undefined || stock == undefined || category == undefined) {
-        res.send({aviso: "datos invalidos"})     
+        res.send({aviso: "invalid data"})     
     }else{
         try {
             await productManager.addProduct(title, description, price, thumbnail, code, stock, status, category)    
-            res.send({aviso: "producto agregado"})
+            res.send({aviso: "added product"})
         } catch (error) {
             console.log(error)
         }

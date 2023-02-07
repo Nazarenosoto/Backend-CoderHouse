@@ -1,14 +1,29 @@
 import fs from 'fs'
 
 export class CartManager {
-    #ruta = './carts.json'
+    #ruta = './src/carts.json'
     constructor(){
         this.path = this.#ruta
     }
 
+    getCartProducts = async (cid) => {
+        try {
+            if (fs.existsSync(this.path)) {
+            const data = await fs.promises.readFile(this.path, 'utf-8')
+            const productDb = JSON.parse(data);
+            const carrito = productDb[parseInt(cid) - 1]
+            return carrito;
+        }
+            await fs.promises.writeFile(this.path, '[]', 'utf-8')
+            return ['Su carrito se encuentra vacío']
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async createCart(){
         let cart = {}
-        if(fs.existsSync(this.path)){    //pusheo el archivo al carrito
+        if(fs.existsSync(this.path)){ 
             let data = await fs.promises.readFile(this.path, 'utf-8') 
             let dataJS = JSON.parse(data)                             
             //agrego un id
@@ -49,19 +64,6 @@ export class CartManager {
 
             await fs.promises.writeFile(this.path, JSON.stringify(dataJS, null, 2), 'utf-8')        
 
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    async getCartProducts(cid){
-        try {
-            //lee los archivos y los guardo en la variable para despues parseado 
-            let data = await fs.promises.readFile(this.path, 'utf-8')       
-            let dataJS = JSON.parse(data)
-            let carrito = dataJS[cid -1]
-
-            return carrito.products            
         } catch (error) {
             console.log(error)
         }
