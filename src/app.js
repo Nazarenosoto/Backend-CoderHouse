@@ -7,16 +7,19 @@ import cartsRouter from './routes/carts.js'
 import viewsRouter from './routes/views.js'
 import __dirname from './utils.js'
 import { ProductManager } from './productManager.js'
+import initConnection from './db/conectionMongo.js'
 
 const app = express()
 const PORT = 8080
 
 const productManager = new ProductManager
 
+initConnection()
+
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.use('/public' ,express.static(__dirname+'/public'))
+app.use(express.static(__dirname+'/public'))
 
 app.engine('handlebars', handlebars.engine())
 app.set('views', __dirname+'/views')
