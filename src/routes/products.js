@@ -1,50 +1,43 @@
 import { Router } from "express"
-import { ProductManager } from "../productManager.js"
+import { MongoProductManager } from "../dao/mongo/mongoProductManager.js"
 
 const router = Router()
 
-const productManager = new ProductManager
+const mongoProductManager = new MongoProductManager
 
 router.get('/', async (req, res)=>{
-    const {limit} = req.query
+    const {limit, page = 1} = req.query       // se recibe limit del query
     try {
-        const data = await productManager.getProducts()
+        let data = await mongoProductManager.getProducts(limit)
 
-        limit ? res.send(data.slice(0, limit)) : res.send(data)
+        res.send(data.docs)
     } catch (error) {
         console.log(error)
     }
 })
 
 router.get('/:pid', async (req, res)=>{
-    const {pid} = req.params
+    const {pid} = req.params        // se recibe pid de los parametros
     try {
-        const data = await productManager.getProducts()
-        pid ? res.send(data.find(product => product.id == pid)) : res.send(data)
+        const allProducts = await mongoProductManager.getProducts()
+        const productById = await mongoProductManager.getProductById(pid)
+
+        pid ? res.send(productById) : res.send(allProducts)
     } catch (error) {
         console.log(error)
     }
 })
 
 router.post('/',async (req, res)=>{
-    const   {
-                title,
-                description,
-                code,
-                price,
-                status,
-                stock,
-                category,
-                thumbnail
-            } = req.body       
+    const { title, description, code, price, status, stock, category, thumbnail } = req.body
 
-    // se verifica que todos los datos sean validos
-    if (title == undefined || description == undefined || code == undefined || price == undefined || status == undefined || stock == undefined || category == undefined) {
-        res.send({aviso: "invalid data"})     
+    if (title == '' || description == '' || code == '' || price == '' || status == '' || stock == '' || category == '') {
+        res.send({aviso: "datos invalidos"})
     }else{
         try {
-            await productManager.addProduct(title, description, price, thumbnail, code, stock, status, category)    
-            res.send({aviso: "added product"})
+            await mongoProductManager.addProduct(title, description, price, thumbnail, code, stock, status, category)
+
+            res.send({aviso: "producto agregado"})
         } catch (error) {
             console.log(error)
         }
@@ -53,46 +46,29 @@ router.post('/',async (req, res)=>{
 
 router.put('/:pid',async (req, res)=>{
     const {pid} = req.params
-    const   {
-                title,
-                description,
-                code,
-                price,
-                status,
-                stock,
-                category,
-                thumbnail
-            } = req.body
-    //verifica que todos los datos sean validos
+    const { title, description, code, price, status, stock, category, thumbnail } = req.body
+
     if (title == undefined || description == undefined || code == undefined || price == undefined || status == undefined || stock == undefined || category == undefined) {
-        res.send({mensaje: "mismatched data"})
+        res.send({mensaje: "datos invalidos"})
     }else{
-        let  obj={
-                    title,
-                    description,
-                    code,
-                    price,
-                    status,
-                    stock,
-                    category,
-                    thumbnail
-                }
+        let  obj =  { title, description, code, price, status, stock, category, thumbnail }
         try {
-            await productManager.updateProduct(pid, obj)        
-            res.send({aviso: "updated product"})
+            await mongoProductManager.updateProduct(pid, obj)
+
+            res.send({aviso: "producto actualizado"})
         } catch (error) {
             console.log(error)
         }
     }
 })
 
-    //Delete product
 router.delete('/:pid',async (req, res)=>{
-    const {pid} = req.params        
+    const {pid} = req.params        // se recibe pid de los parametros
     
     try {
-        await productManager.deleteProduct(pid)     
-        res.send({aviso: "removed product"})
+        await mongoProductManager.deleteProduct(pid)
+
+        res.send({aviso: "producto eliminado"})
     } catch (error) {
         console.log(error)
     }

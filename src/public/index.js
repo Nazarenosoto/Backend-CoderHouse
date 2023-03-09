@@ -52,7 +52,7 @@ ioServer.on('mensajeServer', data =>{
                                         <p>${element.price}</p> 
                                         <p>${element.id}</p> 
                                     </div>
-                                    `
+                                   `
     })
 })
 
