@@ -5,14 +5,15 @@ const router = Router()
 
 const mongoProductManager = new MongoProductManager
 
-router.get('/', async (req, res)=>{
-    const {limit, page = 1} = req.query       // se recibe limit del query
-    try {
-        let data = await mongoProductManager.getProducts(limit)
+router.get('/', async (req, res) => {
+    const { limit } = req.query
 
-        res.send(data.docs)
+    try {
+    const data = await mongoProductManager.getProducts()
+
+    limit ? res.send(data.slice(0,limit)) : res.send(data)
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 })
 
