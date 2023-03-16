@@ -1,4 +1,4 @@
-import { Router } from "express"
+import { query, Router } from "express"
 import { MongoProductManager } from "../dao/mongo/mongoProductManager.js"
 
 const router = Router()
@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     const { limit } = req.query
 
     try {
-    const data = await mongoProductManager.getProducts()
+    const data = await mongoProductManager.getProducts(limit, page,filtro,sort)
 
     limit ? res.send(data.slice(0,limit)) : res.send(data)
     } catch (error) {
